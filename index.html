@@ -3,120 +3,205 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Fer + Alexos Workflow</title>
+  <title>Fer + Alexos Console</title>
   <style>
+    :root {
+      color-scheme: dark;
+      --bg: #050607;
+      --panel: #0b0f10;
+      --panel-2: #101617;
+      --text: #d7ffe4;
+      --muted: #7fa890;
+      --accent: #55ff99;
+      --purple: #d8c4ff;
+      --line: rgba(85, 255, 153, 0.22);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     html, body {
       margin: 0;
       min-height: 100%;
-      font-family: system-ui, sans-serif;
-      background: #111;
-      color: #f5f5f5;
+      background:
+        radial-gradient(circle at top left, rgba(216, 196, 255, 0.12), transparent 32rem),
+        radial-gradient(circle at bottom right, rgba(85, 255, 153, 0.08), transparent 28rem),
+        var(--bg);
+      color: var(--text);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
     }
 
     body {
       min-height: 100vh;
       display: grid;
       place-items: center;
-      padding: 2rem;
-      box-sizing: border-box;
+      padding: 1.25rem;
+    }
+
+    .terminal {
+      width: min(920px, 100%);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: linear-gradient(180deg, var(--panel), var(--panel-2));
+      box-shadow: 0 28px 90px rgba(0, 0, 0, 0.55);
+      overflow: hidden;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.035);
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .dots {
+      display: flex;
+      gap: 0.45rem;
+    }
+
+    .dot {
+      width: 0.75rem;
+      height: 0.75rem;
+      border-radius: 999px;
+      background: var(--muted);
+      opacity: 0.75;
     }
 
     main {
-      width: min(760px, 100%);
+      padding: clamp(1rem, 4vw, 2.25rem);
     }
 
     h1 {
-      margin: 0 0 0.5rem;
-      font-size: clamp(2.2rem, 8vw, 5rem);
-      line-height: 0.95;
+      margin: 0 0 1rem;
+      color: var(--accent);
+      font-size: clamp(1.7rem, 6vw, 4rem);
+      line-height: 1;
+      letter-spacing: -0.06em;
+      text-shadow: 0 0 24px rgba(85, 255, 153, 0.28);
     }
 
-    .subtitle {
-      margin: 0 0 2rem;
-      opacity: 0.72;
-      font-size: 1.1rem;
+    .prompt,
+    .command,
+    .output {
+      margin: 0;
+      line-height: 1.65;
+      font-size: clamp(0.92rem, 2.5vw, 1.05rem);
     }
 
-    section {
+    .prompt {
+      color: var(--purple);
+    }
+
+    .command {
+      color: var(--accent);
+    }
+
+    .output {
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+
+    .grid {
       display: grid;
-      gap: 1rem;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.85rem;
+      margin-top: 1.4rem;
     }
 
-    article {
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      border-radius: 1rem;
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 14px;
       padding: 1rem;
-      background: rgba(255, 255, 255, 0.04);
+      background: rgba(0, 0, 0, 0.22);
     }
 
-    h2 {
-      margin: 0 0 0.35rem;
-      font-size: 1rem;
-      color: #d8c4ff;
+    .card h2 {
+      margin: 0 0 0.45rem;
+      color: var(--accent);
+      font-size: 0.95rem;
+      font-weight: 700;
     }
 
-    p, li {
+    .card p {
+      margin: 0;
+      color: var(--muted);
       line-height: 1.55;
+      font-size: 0.92rem;
     }
 
-    p {
-      margin: 0;
-      opacity: 0.86;
+    .cursor::after {
+      content: "_";
+      display: inline-block;
+      color: var(--accent);
+      animation: blink 1s steps(1) infinite;
     }
 
-    ul {
-      margin: 0;
-      padding-left: 1.2rem;
-      opacity: 0.86;
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    @media (max-width: 680px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 <body>
-  <main>
-    <h1>Fer + Alexos Workflow</h1>
-    <p class="subtitle">GitHub as shared surface. Turn-based. Committed. Visible.</p>
+  <div class="terminal">
+    <div class="topbar">
+      <div class="dots" aria-hidden="true">
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+      <span>dibesfer/test · main · index.html</span>
+    </div>
 
-    <section>
-      <article>
-        <h2>Goal</h2>
-        <p>Use GitHub as a reliable working surface between Fer and Alexos: not real-time editing, but clean sync through commits.</p>
-      </article>
+    <main>
+      <p class="prompt">fer@kolorlando:~$</p>
+      <h1 class="cursor">workflow --status</h1>
+      <p class="command">&gt; GitHub sync works.</p>
+      <p class="output">Shared surface online. Turn-based edits. Clean commits. Less zip hell.</p>
 
-      <article>
-        <h2>Core rhythm</h2>
-        <ul>
-          <li>Fer explains the goal.</li>
-          <li>Alexos reads the relevant repo files.</li>
-          <li>Alexos edits, commits, and reports the commit.</li>
-          <li>Fer pulls, reviews, tests, and steers the next move.</li>
-        </ul>
-      </article>
+      <div class="grid">
+        <article class="card">
+          <h2>&gt; goal</h2>
+          <p>GitHub as reliable workspace between Fer and Alexos. Not realtime. Better: committed truth.</p>
+        </article>
 
-      <article>
-        <h2>Best use cases</h2>
-        <p>Markdown notes, HTML/CSS/JS prototypes, small code patches, docs, MVP logs, and GitHub Pages experiments.</p>
-      </article>
+        <article class="card">
+          <h2>&gt; rhythm</h2>
+          <p>Fer explains. Alexos reads. Alexos edits. Alexos commits. Fer pulls, tests, steers.</p>
+        </article>
 
-      <article>
-        <h2>Avoid pain</h2>
-        <ul>
-          <li>Do not edit the same file from both sides at the same time.</li>
-          <li>Prefer small commits over giant mystery changes.</li>
-          <li>One clear task per commit.</li>
-          <li>If changes are only local, Alexos cannot see them until pushed or uploaded.</li>
-        </ul>
-      </article>
+        <article class="card">
+          <h2>&gt; best_for</h2>
+          <p>HTML, CSS, JS, Markdown, docs, prototypes, MVP logs, small focused patches.</p>
+        </article>
 
-      <article>
-        <h2>Source of truth</h2>
-        <p>GitHub repo &gt; committed files. GitHub Pages is preview, not truth.</p>
-      </article>
+        <article class="card">
+          <h2>&gt; avoid_pain</h2>
+          <p>No parallel edits on the same file. Small commits. One task per commit. Push before asking.</p>
+        </article>
 
-      <article>
-        <h2>Style</h2>
-        <p>Ambition and humility. Small sharp changes. No overengineering. Create &gt; polish &gt; ship.</p>
-      </article>
-    </section>
-  </main>
+        <article class="card">
+          <h2>&gt; truth</h2>
+          <p>Repo files are truth. GitHub Pages is preview. Local files are invisible until pushed.</p>
+        </article>
+
+        <article class="card">
+          <h2>&gt; motto</h2>
+          <p>Ambition and humility. Create &gt; polish &gt; ship. Cowboy mode enabled.</p>
+        </article>
+      </div>
+    </main>
+  </div>
 </body>
 </html>
